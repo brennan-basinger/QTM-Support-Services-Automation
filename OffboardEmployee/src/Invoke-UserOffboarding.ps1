@@ -158,12 +158,15 @@ function Ensure-EXO {
     Act "Connecting to Exchange Online..."
     $isDomain = ($TenantHint -and ($TenantHint -match '^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'))
 
+
     # 1) Try normal WAM sign-in
     try {
       if ($isDomain) { Connect-ExchangeOnline -ShowBanner:$false -Organization $TenantHint -ErrorAction Stop | Out-Null }
       else           { Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop | Out-Null }
       return
     } catch { Skip ("WAM sign-in failed, retrying with Device Code: {0}" -f $_) }
+
+<#
 
     # 2) Fallback to Device Code (bypasses WAM entirely)
     try {
@@ -172,6 +175,7 @@ function Ensure-EXO {
       return
     } catch { Skip ("Device Code also failed, trying DisableWAM if supported: {0}" -f $_) }
 
+#>
     # 3) Try DisableWAM (EXO 3.7.2+)
     try {
       if ($isDomain) { Connect-ExchangeOnline -UserPrincipalName $UserUpn -Organization $TenantHint -DisableWAM -ShowBanner:$false -ErrorAction Stop | Out-Null }
@@ -180,6 +184,9 @@ function Ensure-EXO {
     } catch {
       throw ("Failed to connect to Exchange Online after all fallbacks: {0}" -f $_)
     }
+
+
+
   }
 }
 
