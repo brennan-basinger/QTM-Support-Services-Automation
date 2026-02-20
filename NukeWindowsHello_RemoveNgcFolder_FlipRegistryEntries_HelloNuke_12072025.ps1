@@ -43,6 +43,8 @@ else {
 # uncomment this block. Usually not required if we are just trying to
 # stop provisioning prompts
 
+<#
+
 $helloServices = @(
     "NgcSvc",      # Microsoft Passport
     "NgcCtnrSvc"   # Microsoft Passport Container
@@ -60,6 +62,9 @@ foreach ($svc in $helloServices) {
         Write-Warning "Failed to adjust service $svc: $($_.Exception.Message)"
     }
 }
+#>
+
+
 
 
 # region 2: Registry – Hard-disable Windows Hello for Business & prompts
@@ -77,3 +82,6 @@ New-ItemProperty -Path $pfwKey -Name "Enabled" -Value 0 -PropertyType DWord -For
 New-ItemProperty -Path $pfwKey -Name "DisablePostLogonProvisioning" -Value 1 -PropertyType DWord -Force | Out-Null
 
 Write-Host "  - PassportForWork: Enabled=0, DisablePostLogonProvisioning=1 set."
+
+
+
